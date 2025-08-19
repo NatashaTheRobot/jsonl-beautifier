@@ -178,10 +178,13 @@
         body.dark-mode .token.number { color: #26A69A; }   /* teal */
         body.dark-mode .token.boolean,
         body.dark-mode .token.null { color: #FFC107; }     /* amber */
-        body.dark-mode .token.punctuation {
-            color: #A5D6A7;
-            background: none;
-        } 
+        body.dark-mode .token.punctuation,
+        body.dark-mode .token.operator {
+            color: #A5D6A7; /* Your custom green-gray color */
+            background: none !important; /* Forcefully remove any background */
+            border: none !important;      /* Remove any borders */
+            box-shadow: none !important; /* Remove any shadows */
+        }
         
         .ad-container {
             margin-top: 20px;
