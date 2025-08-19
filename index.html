@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>JSONL Beautifier | Format JSON Lines Online</title>
+    <meta name="description" content="A simple, free, and fast online tool to beautify and format JSON Lines (JSONL) data. Paste your JSONL on the left and see the formatted output on the right.">
+    <meta name="keywords" content="jsonl beautifier, json lines formatter, format jsonl, jsonl viewer, online jsonl tool">
+    <meta name="author" content="Your Name or App Name">
+    <link rel="canonical" href="https://your-github-username.github.io/your-repo-name/" />
+
+    <!-- Google AdSense Script (IMPORTANT: replace with your actual publisher ID) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --textarea-bg: #fff;
+            --header-text: #000;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #e6e6e6;
+            --border-color: #444;
+            --textarea-bg: #2a2a2a;
+            --header-text: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--header-text);
+        }
+
+        .dark-mode-toggle {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: var(--bg-color);
+        }
+
+        .editor-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            height: 65vh;
+        }
+
+        textarea {
+            flex-grow: 1;
+            min-width: 300px;
+            height: 100%;
+            padding: 15px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            resize: none;
+            box-sizing: border-box;
+        }
+        
+        .ad-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JSONL Beautifier</h1>
+            <button id="darkModeToggle" class="dark-mode-toggle">Toggle Dark Mode</button>
+        </header>
+
+        <div class="editor-container">
+            <textarea id="jsonlInput" placeholder="Paste your JSONL here..."></textarea>
+            <textarea id="jsonlOutput" readonly placeholder="Formatted JSONL will appear here..."></textarea>
+        </div>
+        
+        <div class="ad-container">
+            <!-- IMPORTANT: Replace with your actual ad unit code -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="YYYYYYYYYY"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <footer>
+            <p>A simple tool to format JSON Lines data.</p>
+        </footer>
+    </div>
+
+    <script>
+        const jsonlInput = document.getElementById('jsonlInput');
+        const jsonlOutput = document.getElementById('jsonlOutput');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        // --- Cookie Functions ---
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; secure";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // --- Dark Mode Logic ---
+        function enableDarkMode() {
+            document.body.classList.add('dark-mode');
+            setCookie('theme', 'dark', 365);
+        }
+
+        function disableDarkMode() {
+            document.body.classList.remove('dark-mode');
+            setCookie('theme', 'light', 365);
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            if (document.body.classList.contains('dark-mode')) {
+                disableDarkMode();
+            } else {
+                enableDarkMode();
+            }
+        });
+
+        // Check for saved theme in cookies on page load
+        if (getCookie('theme') === 'dark') {
+            enableDarkMode();
+        }
+
+        // --- JSONL Formatting Logic ---
+        jsonlInput.addEventListener('input', () => {
+            const inputText = jsonlInput.value.trim();
+            if (!inputText) {
+                jsonlOutput.value = '';
+                return;
+            }
+
+            const lines = inputText.split('\n');
+            let formattedOutput = '';
+
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                try {
+                    const jsonObj = JSON.parse(line);
+                    formattedOutput += JSON.stringify(jsonObj, null, 2) + '\n';
+                } catch (error) {
+                    // If a line is not valid JSON, just display it as is with an error comment
+                    formattedOutput += `// Invalid JSON: ${line}\n`;
+                }
+            });
+
+            jsonlOutput.value = formattedOutput.trim();
+        });
+    </script>
+</body>
+</html>
