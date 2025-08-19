@@ -90,10 +90,11 @@
             min-width: 300px;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
         textarea {
-            flex-grow: 1;
+            width: 100%;
             height: 100%;
             padding: 15px;
             font-family: "Courier New", Courier, monospace;
@@ -108,12 +109,13 @@
 
         .output-container {
             position: relative;
-            flex-grow: 1;
+            width: 100%;
             height: 100%;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             background-color: var(--textarea-bg);
             overflow: auto;
+            box-sizing: border-box;
         }
 
         .highlighted-output {
@@ -123,7 +125,10 @@
             font-size: 14px;
             line-height: 1.5;
             background: transparent !important;
-            min-height: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: calc(100% - 30px);
+            box-sizing: border-box;
         }
 
         /* Custom Prism theme adjustments */
@@ -131,6 +136,8 @@
             background: transparent !important;
             padding: 0 !important;
             border-radius: 0 !important;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         /* Dark mode Prism adjustments */
@@ -177,6 +184,31 @@
         /* Loading state */
         .loading {
             opacity: 0.6;
+        }
+
+        /* Custom scrollbar for better appearance */
+        .output-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .output-container::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        .output-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .output-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* For Firefox */
+        .output-container {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-color);
         }
 
     </style>
