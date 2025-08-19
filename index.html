@@ -18,8 +18,8 @@
     <title>JSONL Beautifier | Format JSON Lines Online</title>
     <meta name="description" content="A simple, free, and fast online tool to beautify and format JSON Lines (JSONL) data. Paste your JSONL on the left and see the formatted output on the right.">
     <meta name="keywords" content="jsonl beautifier, json lines formatter, format jsonl, jsonl viewer, online jsonl tool">
-    <meta name="author" content="Your Name or App Name">
-    <link rel="canonical" href="https://your-github-username.github.io/your-repo-name/" />
+    <meta name="author" content="NatashaTheRobot, Inc">
+    <link rel="canonical" href="https://natashatherobot.github.io/jsonl-beautifier/" />
 
     <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7705060245286159"
@@ -36,8 +36,8 @@
             --border-color: #dee2e6;
             --textarea-bg: #fff;
             --header-text: #000;
-            --accent-color: #4dabf7; /* soft blue */
-            --accent-color-dark: #1c7ed6; /* darker blue */
+            --accent-color: #4CAF50; /* green */
+            --accent-color-dark: #388E3C; /* darker green */
         }
 
         body {
@@ -55,8 +55,8 @@
             --border-color: #444;
             --textarea-bg: #2a2a2a;
             --header-text: #fff;
-            --accent-color: #74c0fc;
-            --accent-color-dark: #4dabf7;
+            --accent-color: #66BB6A; /* lighter green */
+            --accent-color-dark: #43A047; /* medium green */
             background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
         }
 
@@ -159,17 +159,17 @@
             word-wrap: break-word;
         }
 
-        /* Dark mode Prism adjustments */
+        /* Dark mode Prism adjustments with green accents */
         body.dark-mode .highlighted-output {
             background: var(--textarea-bg) !important;
         }
 
-        body.dark-mode .token.string { color: #98d982; }
-        body.dark-mode .token.number { color: #ffcd22; }
+        body.dark-mode .token.property { color: #4CAF50; } /* primary green */
+        body.dark-mode .token.string { color: #81C784; }   /* light green */
+        body.dark-mode .token.number { color: #26A69A; }   /* teal */
         body.dark-mode .token.boolean,
-        body.dark-mode .token.null { color: #ff6b9d; }
-        body.dark-mode .token.property { color: #82d7ff; }
-        body.dark-mode .token.punctuation { color: #e6e6e6; }
+        body.dark-mode .token.null { color: #FFC107; }     /* amber */
+        body.dark-mode .token.punctuation { color: #A5D6A7; } /* green-gray */
         
         .ad-container {
             margin-top: 20px;
