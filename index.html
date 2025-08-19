@@ -173,11 +173,23 @@
             background: var(--textarea-bg) !important;
         }
 
-        body.dark-mode .token.property { color: #4CAF50; } /* primary green */
-        body.dark-mode .token.string { color: #81C784; }   /* light green */
-        body.dark-mode .token.number { color: #26A69A; }   /* teal */
+        body.dark-mode .token.property {
+            color: #d1308a;
+            text-shadow: none !important;
+        }
+        body.dark-mode .token.string { 
+            color: #81C784; 
+            text-shadow: none !important;
+        }   /* light green */
+        body.dark-mode .token.number { 
+            color: #26A69A; 
+            text-shadow: none !important;
+        }   /* teal */
         body.dark-mode .token.boolean,
-        body.dark-mode .token.null { color: #FFC107; }     /* amber */
+        body.dark-mode .token.null { 
+            color: #FFC107; 
+            text-shadow: none !important;
+        }     /* amber */
         body.dark-mode .token.punctuation,
         body.dark-mode .token.operator {
             color: #A5D6A7; /* Your custom green-gray color */
