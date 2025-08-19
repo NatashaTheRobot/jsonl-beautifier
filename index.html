@@ -39,6 +39,15 @@
             --accent-color: #4CAF50; /* green */
             --accent-color-dark: #388E3C; /* darker green */
         }
+        
+        @media (prefers-color-scheme: dark) {
+          .output-box, pre, code {
+            outline: none !important;
+            border: none !important; /* or use none if you want zero border */
+            box-shadow: none !important;
+          }
+        }
+
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
