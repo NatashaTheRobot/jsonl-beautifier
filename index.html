@@ -36,15 +36,17 @@
             --border-color: #dee2e6;
             --textarea-bg: #fff;
             --header-text: #000;
+            --accent-color: #4dabf7; /* soft blue */
+            --accent-color-dark: #1c7ed6; /* darker blue */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: var(--bg-color);
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             color: var(--text-color);
-            transition: background-color 0.2s, color 0.2s;
+            transition: background 0.3s, color 0.3s;
         }
         
         body.dark-mode {
@@ -53,6 +55,9 @@
             --border-color: #444;
             --textarea-bg: #2a2a2a;
             --header-text: #fff;
+            --accent-color: #74c0fc;
+            --accent-color-dark: #4dabf7;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
         }
 
         .container {
@@ -64,28 +69,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 3px solid var(--accent-color);
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
 
         h1 {
             margin: 0;
-            color: var(--header-text);
+            color: var(--accent-color-dark);
         }
 
         .dark-mode-toggle {
-            padding: 8px 12px;
+            padding: 8px 14px;
             cursor: pointer;
-            border: 1px solid var(--border-color);
-            background-color: var(--textarea-bg);
-            color: var(--text-color);
-            border-radius: 5px;
-            transition: background-color 0.2s;
+            border: none;
+            background-color: var(--accent-color);
+            color: #fff;
+            border-radius: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: 500;
         }
 
         .dark-mode-toggle:hover {
-            background-color: var(--bg-color);
+            background-color: var(--accent-color-dark);
+            transform: scale(1.05);
         }
 
         .editor-container {
@@ -109,23 +116,25 @@
             padding: 15px;
             font-family: "Courier New", Courier, monospace;
             font-size: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
             background-color: var(--textarea-bg);
             color: var(--text-color);
             resize: none;
             box-sizing: border-box;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .output-container {
             position: relative;
             width: 100%;
             height: 100%;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
             background-color: var(--textarea-bg);
             overflow: auto;
             box-sizing: border-box;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .highlighted-output {
@@ -155,27 +164,12 @@
             background: var(--textarea-bg) !important;
         }
 
-        /* Prism dark theme colors for better dark mode integration */
-        body.dark-mode .token.string {
-            color: #98d982;
-        }
-
-        body.dark-mode .token.number {
-            color: #ffcd22;
-        }
-
+        body.dark-mode .token.string { color: #98d982; }
+        body.dark-mode .token.number { color: #ffcd22; }
         body.dark-mode .token.boolean,
-        body.dark-mode .token.null {
-            color: #ff6b9d;
-        }
-
-        body.dark-mode .token.property {
-            color: #82d7ff;
-        }
-
-        body.dark-mode .token.punctuation {
-            color: #e6e6e6;
-        }
+        body.dark-mode .token.null { color: #ff6b9d; }
+        body.dark-mode .token.property { color: #82d7ff; }
+        body.dark-mode .token.punctuation { color: #e6e6e6; }
         
         .ad-container {
             margin-top: 20px;
@@ -185,42 +179,33 @@
         footer {
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid var(--border-color);
+            border-top: 2px solid var(--accent-color);
             text-align: center;
             font-size: 14px;
-            color: #6c757d;
+            color: var(--text-color);
         }
 
-        /* Loading state */
-        .loading {
-            opacity: 0.6;
-        }
+        .loading { opacity: 0.6; }
 
-        /* Custom scrollbar for better appearance */
+        /* Scrollbar */
         .output-container::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
-
         .output-container::-webkit-scrollbar-track {
             background: var(--bg-color);
         }
-
         .output-container::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 4px;
         }
-
         .output-container::-webkit-scrollbar-thumb:hover {
             background: #999;
         }
-
-        /* For Firefox */
         .output-container {
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--bg-color);
         }
-
     </style>
 </head>
 <body>
@@ -259,7 +244,7 @@
         </footer>
     </div>
 
-    <!-- Prism.js JavaScript for syntax highlighting -->
+    <!-- Prism.js JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
@@ -270,7 +255,6 @@
         const darkModeToggle = document.getElementById('darkModeToggle');
         const prismDarkTheme = document.getElementById('prism-dark-theme');
 
-        // --- Cookie Functions ---
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -286,86 +270,59 @@
             const ca = document.cookie.split(';');
             for (let i = 0; i < ca.length; i++) {
                 let c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length);
             }
             return null;
         }
 
-        // --- Dark Mode Logic ---
         function enableDarkMode() {
             document.body.classList.add('dark-mode');
-            if (prismDarkTheme) {
-                prismDarkTheme.disabled = false;
-            }
+            if (prismDarkTheme) prismDarkTheme.disabled = false;
             setCookie('theme', 'dark', 365);
         }
 
         function disableDarkMode() {
             document.body.classList.remove('dark-mode');
-            if (prismDarkTheme) {
-                prismDarkTheme.disabled = true;
-            }
+            if (prismDarkTheme) prismDarkTheme.disabled = true;
             setCookie('theme', 'light', 365);
         }
 
         darkModeToggle.addEventListener('click', () => {
-            if (document.body.classList.contains('dark-mode')) {
-                disableDarkMode();
-            } else {
-                enableDarkMode();
-            }
+            if (document.body.classList.contains('dark-mode')) disableDarkMode();
+            else enableDarkMode();
         });
 
-        // Check for saved theme in cookies on page load
-        if (getCookie('theme') === 'dark') {
-            enableDarkMode();
-        }
+        if (getCookie('theme') === 'dark') enableDarkMode();
 
-        // --- JSONL Formatting Logic with Syntax Highlighting ---
         let debounceTimer;
-
         function formatAndHighlight() {
             const inputText = jsonlInput.value.trim();
             if (!inputText) {
                 jsonlOutput.textContent = '';
                 return;
             }
-
             const lines = inputText.split('\n');
             let formattedOutput = '';
-
             lines.forEach((line, index) => {
                 if (line.trim() === '') return;
                 try {
                     const jsonObj = JSON.parse(line);
                     formattedOutput += JSON.stringify(jsonObj, null, 2);
-                    // Add separator between JSON objects (except for the last one)
                     if (index < lines.length - 1 && lines.slice(index + 1).some(l => l.trim() !== '')) {
                         formattedOutput += '\n\n---\n\n';
                     }
-                } catch (error) {
-                    // If a line is not valid JSON, just display it as is with an error comment
+                } catch {
                     formattedOutput += `/* Invalid JSON: ${line} */`;
-                    if (index < lines.length - 1) {
-                        formattedOutput += '\n\n';
-                    }
+                    if (index < lines.length - 1) formattedOutput += '\n\n';
                 }
             });
-
             jsonlOutput.textContent = formattedOutput.trim();
-            
-            // Apply syntax highlighting
-            if (window.Prism) {
-                Prism.highlightElement(jsonlOutput);
-            }
+            if (window.Prism) Prism.highlightElement(jsonlOutput);
         }
 
         jsonlInput.addEventListener('input', () => {
-            // Add loading state
             jsonlOutput.classList.add('loading');
-            
-            // Debounce the formatting to improve performance
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 formatAndHighlight();
@@ -373,11 +330,8 @@
             }, 300);
         });
 
-        // Initial highlighting setup
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.Prism) {
-                Prism.highlightAll();
-            }
+            if (window.Prism) Prism.highlightAll();
         });
     </script>
 </body>
