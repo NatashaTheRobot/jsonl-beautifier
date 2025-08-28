@@ -257,17 +257,76 @@
         .line-numbers .line-numbers-rows {
             border-right: 1px solid var(--border-color) !important;
             left: -4.5em !important;
-            top: 15px !important;
+            top: 2.5em !important;
         }
 
         .line-numbers-rows > span:before {
             color: var(--text-color) !important;
             opacity: 0.4;
         }
-
+        
         .highlighted-output.line-numbers {
             padding-left: 4.5em !important;
+            padding-top: 2.5em !important;
         }
+
+        /* Styles for collapsible JSON entries */
+        .json-header {
+            cursor: pointer;
+            padding: 8px 15px;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            user-select: none; /* prevent text selection on click */
+            transition: background-color 0.2s;
+        }
+
+        .json-header:hover {
+            background-color: #efefef;
+        }
+
+        .toggle-arrow {
+            margin-right: 8px;
+            font-size: 0.9em;
+            width: 1em;
+            text-align: center;
+            display: inline-block;
+            transition: transform 0.15s ease-in-out;
+        }
+
+        .json-entry.collapsed .toggle-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .json-entry.collapsed .collapsible-content {
+            display: none;
+        }
+
+        .json-separator {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 0;
+        }
+        
+        .invalid-json .json-header {
+            color: #d32f2f;
+            cursor: default;
+            background-color: #ffebee;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode .json-header {
+            background-color: #2c2c2c;
+        }
+
+        body.dark-mode .json-header:hover {
+            background-color: #383838;
+        }
+        
+        body.dark-mode .invalid-json .json-header {
+            background-color: #4d2e2e;
+        }
+
     </style>
 </head>
 <body>
@@ -282,8 +341,8 @@
                 <textarea id="jsonlInput" placeholder="Paste your JSONL here..."></textarea>
             </div>
             <div class="output-panel">
-                <div class="output-container">
-                    <pre class="highlighted-output line-numbers"><code id="jsonlOutput" class="language-json"></code></pre>
+                <div id="jsonlOutput" class="output-container">
+                    <!-- Beautified JSONL will be rendered here -->
                 </div>
             </div>
         </div>
@@ -361,27 +420,61 @@
         let debounceTimer;
         function formatAndHighlight() {
             const inputText = jsonlInput.value.trim();
+            jsonlOutput.innerHTML = ''; // Clear previous output
+
             if (!inputText) {
-                jsonlOutput.textContent = '';
                 return;
             }
-            const lines = inputText.split('\n');
-            let formattedOutput = '';
+
+            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+
             lines.forEach((line, index) => {
-                if (line.trim() === '') return;
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'json-entry';
+                
                 try {
                     const jsonObj = JSON.parse(line);
-                    formattedOutput += JSON.stringify(jsonObj, null, 2);
-                    if (index < lines.length - 1 && lines.slice(index + 1).some(l => l.trim() !== '')) {
-                        formattedOutput += '\n\n---\n\n';
-                    }
-                } catch {
-                    formattedOutput += `/* Invalid JSON: ${line} */`;
-                    if (index < lines.length - 1) formattedOutput += '\n\n';
+                    const formattedJson = JSON.stringify(jsonObj, null, 2);
+
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'json-header';
+                    headerDiv.innerHTML = '<span class="toggle-arrow">▼</span> <span>{...}</span>'; // Simple summary
+
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'collapsible-content';
+
+                    const pre = document.createElement('pre');
+                    pre.className = 'highlighted-output line-numbers';
+                    const code = document.createElement('code');
+                    code.className = 'language-json';
+                    code.textContent = formattedJson;
+
+                    pre.appendChild(code);
+                    contentDiv.appendChild(pre);
+
+                    entryDiv.appendChild(headerDiv);
+                    entryDiv.appendChild(contentDiv);
+
+                    jsonlOutput.appendChild(entryDiv);
+
+                } catch (e) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'json-entry invalid-json';
+                    errorDiv.innerHTML = `<div class="json-header">Invalid JSON</div><div class="collapsible-content"><pre>${line}</pre></div>`;
+                    jsonlOutput.appendChild(errorDiv);
+                }
+
+                // Add separator
+                if (index < lines.length - 1) {
+                    const separator = document.createElement('hr');
+                    separator.className = 'json-separator';
+                    jsonlOutput.appendChild(separator);
                 }
             });
-            jsonlOutput.textContent = formattedOutput.trim();
-            if (window.Prism) Prism.highlightElement(jsonlOutput);
+
+            if (window.Prism) {
+                Prism.highlightAllUnder(jsonlOutput);
+            }
         }
 
         jsonlInput.addEventListener('input', () => {
@@ -391,6 +484,19 @@
                 formatAndHighlight();
                 jsonlOutput.classList.remove('loading');
             }, 300);
+        });
+
+        jsonlOutput.addEventListener('click', (event) => {
+            const header = event.target.closest('.json-header');
+            if (!header) return;
+
+            const entry = header.parentElement;
+            entry.classList.toggle('collapsed');
+
+            const arrow = header.querySelector('.toggle-arrow');
+            if (arrow) {
+                arrow.textContent = entry.classList.contains('collapsed') ? '►' : '▼';
+            }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
