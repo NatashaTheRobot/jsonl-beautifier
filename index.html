@@ -45,6 +45,7 @@
     <!-- Prism.js CSS for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css" rel="stylesheet" id="prism-dark-theme" disabled />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
 
     <style>
         :root {
@@ -251,6 +252,22 @@
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) var(--bg-color);
         }
+
+        /* Adjustments for Prism line numbers */
+        .line-numbers .line-numbers-rows {
+            border-right: 1px solid var(--border-color) !important;
+            left: -4.5em !important;
+            top: 15px !important;
+        }
+
+        .line-numbers-rows > span:before {
+            color: var(--text-color) !important;
+            opacity: 0.4;
+        }
+
+        .highlighted-output.line-numbers {
+            padding-left: 4.5em !important;
+        }
     </style>
 </head>
 <body>
@@ -266,7 +283,7 @@
             </div>
             <div class="output-panel">
                 <div class="output-container">
-                    <pre class="highlighted-output"><code id="jsonlOutput" class="language-json"></code></pre>
+                    <pre class="highlighted-output line-numbers"><code id="jsonlOutput" class="language-json"></code></pre>
                 </div>
             </div>
         </div>
@@ -293,6 +310,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
     <script>
         const jsonlInput = document.getElementById('jsonlInput');
