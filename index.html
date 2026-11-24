@@ -58,6 +58,18 @@
      crossorigin="anonymous"></script>
 
     <style>
+        @property --bg-color {
+            syntax: "<color>";
+            inherits: true;
+            initial-value: #f8f9fa;
+        }
+
+        @property --bg-end-color {
+            syntax: "<color>";
+            inherits: true;
+            initial-value: #e9ecef;
+        }
+
         :root {
             --bg-color: #f8f9fa;
             --bg-end-color: #e9ecef;
@@ -91,6 +103,63 @@
             --error-bg: #4d2e2e;
         }
 
+        /* Atomic GPU cross-fade via View Transitions API */
+        @keyframes theme-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        ::view-transition-old(root) {
+            animation: none;
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            animation: theme-fade-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+            mix-blend-mode: normal;
+            z-index: 2;
+        }
+
+        html.theme-switching,
+        html.theme-switching *,
+        html.theme-switching *::before,
+        html.theme-switching *::after {
+            transition: none !important;
+        }
+
+        /* Synchronized CSS fallback for browsers without View Transitions */
+        html.theme-transitioning {
+            transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        --bg-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        --bg-end-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html.theme-transitioning body,
+        html.theme-transitioning header,
+        html.theme-transitioning h1,
+        html.theme-transitioning footer,
+        html.theme-transitioning .input-panel,
+        html.theme-transitioning .output-panel,
+        html.theme-transitioning .panel-toolbar,
+        html.theme-transitioning .pagination-bar,
+        html.theme-transitioning textarea,
+        html.theme-transitioning .output-container,
+        html.theme-transitioning .large-input-preview,
+        html.theme-transitioning .large-input-banner,
+        html.theme-transitioning .large-preview-code,
+        html.theme-transitioning .toolbar-btn,
+        html.theme-transitioning .toolbar-input,
+        html.theme-transitioning .dark-mode-toggle,
+        html.theme-transitioning .json-header,
+        html.theme-transitioning .copy-entry-btn,
+        html.theme-transitioning .json-separator,
+        html.theme-transitioning .status-badge,
+        html.theme-transitioning .panel-label {
+            transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
         html {
             min-height: 100%;
             background-color: #eef0f2;
@@ -113,7 +182,6 @@
             background: transparent;
             color: var(--text-color);
             overscroll-behavior: none;
-            transition: color 0.3s;
         }
 
         .container {
@@ -798,10 +866,42 @@
                 setCookie('theme', 'light', 365);
             }
 
-            darkModeToggle.addEventListener('click', () => {
-                if (document.documentElement.classList.contains('dark-mode')) disableDarkMode();
-                else enableDarkMode();
-            });
+            let themeSwitchCount = 0;
+            let themeFallbackTimer = null;
+
+            function toggleTheme() {
+                const applyTheme = () => {
+                    if (document.documentElement.classList.contains('dark-mode')) disableDarkMode();
+                    else enableDarkMode();
+                };
+
+                const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (prefersReducedMotion) {
+                    applyTheme();
+                    return;
+                }
+
+                if (typeof document.startViewTransition === 'function') {
+                    themeSwitchCount++;
+                    document.documentElement.classList.add('theme-switching');
+                    const vt = document.startViewTransition(applyTheme);
+                    vt.finished.catch(() => {}).finally(() => {
+                        themeSwitchCount = Math.max(0, themeSwitchCount - 1);
+                        if (themeSwitchCount === 0) {
+                            document.documentElement.classList.remove('theme-switching');
+                        }
+                    });
+                } else {
+                    document.documentElement.classList.add('theme-transitioning');
+                    applyTheme();
+                    clearTimeout(themeFallbackTimer);
+                    themeFallbackTimer = setTimeout(() => {
+                        document.documentElement.classList.remove('theme-transitioning');
+                    }, 280);
+                }
+            }
+
+            darkModeToggle.addEventListener('click', toggleTheme);
 
             if (getCookie('theme') === 'dark' || document.documentElement.classList.contains('dark-mode')) {
                 document.documentElement.classList.add('dark-mode');
