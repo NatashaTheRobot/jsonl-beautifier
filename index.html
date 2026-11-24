@@ -219,7 +219,7 @@
         body {
             font-family: var(--font-ui);
             margin: 0;
-            padding-block: 20px;
+            padding-block: clamp(20px, 0.75rem + 1.5vw, 36px);
             padding-inline: clamp(12px, 0.25rem + 2.5vw, 32px);
             min-height: 100vh;
             min-height: 100svh;
@@ -252,13 +252,13 @@
             justify-content: space-between;
             align-items: center;
             gap: 12px;
-            margin-block-end: 18px;
+            margin-block-end: clamp(20px, 0.75rem + 1.2vw, 30px);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             min-width: 0;
             color: inherit;
             text-decoration: none;
@@ -286,8 +286,8 @@
         }
 
         .tagline {
-            margin: 2px 0 0;
-            font-size: 13px;
+            margin: 5px 0 0;
+            font-size: 14px;
             color: var(--muted-text);
             white-space: nowrap;
             overflow: hidden;
@@ -332,9 +332,9 @@
         .editor-container {
             display: flex;
             flex-wrap: wrap;
-            gap: clamp(12px, 0.5rem + 1vw, 20px);
-            height: clamp(420px, 100vh - 13rem, 62rem);
-            height: clamp(420px, 100dvh - 13rem, 62rem);
+            gap: clamp(14px, 0.5rem + 1.2vw, 24px);
+            height: clamp(440px, 100vh - 15rem, 62rem);
+            height: clamp(440px, 100dvh - 15rem, 62rem);
         }
 
         .input-panel, .output-panel {
@@ -369,9 +369,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
-            min-height: 46px;
-            padding: 8px 12px 8px 16px;
+            gap: 10px 12px;
+            min-height: 58px;
+            padding: 10px 14px 10px 20px;
             background-color: var(--surface-subtle);
             border-bottom: 1px solid var(--border-color);
             font-size: 13px;
@@ -382,7 +382,7 @@
         .toolbar-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             min-width: 0;
         }
 
@@ -412,14 +412,14 @@
 
         .status-badge {
             color: var(--muted-text);
-            font-size: 12px;
+            font-size: 13px;
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
         }
 
         .toolbar-btn {
-            padding: 5px 11px;
-            font-size: 12px;
+            padding: 7px 13px;
+            font-size: 13px;
             font-weight: 550;
             line-height: 1.4;
             border: 1px solid var(--border-color);
@@ -436,9 +436,9 @@
         }
 
         .toolbar-input {
-            padding: 5px 10px;
+            padding: 7px 12px;
             font-family: inherit;
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-control);
@@ -463,12 +463,12 @@
         }
 
         .filter-input {
-            width: 150px;
+            width: 170px;
             max-width: 100%;
         }
 
         .jump-input {
-            width: 76px;
+            width: 84px;
         }
 
         .input-body {
@@ -482,10 +482,10 @@
         textarea {
             width: 100%;
             height: 100%;
-            padding: 16px;
+            padding: 20px;
             font-family: var(--font-mono);
             font-size: 13px;
-            line-height: 1.6;
+            line-height: 1.75;
             border: none;
             background-color: var(--textarea-bg);
             color: var(--text-color);
@@ -520,21 +520,21 @@
             justify-content: space-between;
             gap: 8px;
             flex-wrap: wrap;
-            padding: 8px 12px 8px 16px;
+            padding: 10px 14px 10px 20px;
             background-color: var(--accent-soft);
             border-bottom: 1px solid var(--border-color);
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-color);
         }
 
         .large-preview-code {
             flex: 1;
             margin: 0;
-            padding: 12px 16px;
+            padding: 20px;
             overflow: auto;
             font-family: var(--font-mono);
             font-size: 13px;
-            line-height: 1.6;
+            line-height: 1.75;
             color: var(--muted-text);
             white-space: pre;
         }
@@ -563,7 +563,7 @@
         }
 
         .output-placeholder {
-            padding: 24px 16px;
+            padding: 32px 20px;
             color: var(--muted-text);
             font-size: 14px;
             text-align: center;
@@ -575,10 +575,10 @@
             justify-content: space-between;
             gap: 8px;
             flex-wrap: wrap;
-            padding: 8px 12px;
+            padding: 10px 14px;
             background-color: var(--surface-subtle);
             border-top: 1px solid var(--border-color);
-            font-size: 12px;
+            font-size: 13px;
             flex-shrink: 0;
         }
 
@@ -616,12 +616,12 @@
 
         .json-header {
             cursor: pointer;
-            padding: 8px 15px;
+            padding: 12px 14px 12px 20px;
             background-color: var(--surface-subtle);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 12px;
             user-select: none;
             -webkit-user-select: none;
             transition: background-color 0.2s;
@@ -640,7 +640,7 @@
         }
 
         .toggle-arrow {
-            margin-right: 8px;
+            margin-right: 10px;
             font-size: 0.9em;
             width: 1em;
             text-align: center;
@@ -658,8 +658,8 @@
         }
 
         .copy-entry-btn {
-            padding: 3px 10px;
-            font-size: 11px;
+            padding: 4px 12px;
+            font-size: 12px;
             font-weight: 550;
             border: 1px solid var(--border-color);
             border-radius: 999px;
@@ -672,10 +672,10 @@
         .json-code {
             counter-reset: line;
             margin: 0;
-            padding: 12px 15px 12px 0;
+            padding: 16px 20px 20px 0;
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.7;
         }
 
         .json-code-line {
@@ -687,9 +687,9 @@
             counter-increment: line;
             content: counter(line);
             flex: 0 0 auto;
-            min-width: 3.6em;
-            padding-right: 0.8em;
-            margin-right: 0.8em;
+            min-width: 4em;
+            padding-right: 1em;
+            margin-right: 1em;
             text-align: right;
             color: var(--text-color);
             opacity: 0.4;
@@ -708,7 +708,7 @@
         }
 
         .entry-placeholder {
-            padding: 12px 15px;
+            padding: 16px 20px;
             color: var(--muted-text);
             font-family: var(--font-mono);
             font-size: 13px;
@@ -717,10 +717,10 @@
         .load-more-bar {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            padding: 8px 15px 12px 4.5em;
-            font-size: 12px;
+            padding: 4px 20px 18px 5em;
+            font-size: 13px;
             color: var(--muted-text);
         }
 
@@ -741,10 +741,10 @@
 
         .invalid-raw {
             margin: 0;
-            padding: 12px 15px;
+            padding: 16px 20px;
             font-family: var(--font-mono);
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.7;
             white-space: pre-wrap;
             overflow-wrap: anywhere;
             word-break: break-all;
@@ -752,7 +752,7 @@
         }
 
         .ad-container {
-            margin-top: 20px;
+            margin-top: 28px;
             text-align: center;
             color-scheme: light;
         }
@@ -768,7 +768,7 @@
         }
 
         footer {
-            margin-top: 20px;
+            margin-top: 28px;
             text-align: center;
             font-size: 13px;
             color: var(--muted-text);
@@ -882,7 +882,7 @@
                 <img class="brand-logo" src="/logo.svg" width="44" height="44" alt="">
                 <div class="brand-text">
                     <h1>JSONL Beautifier</h1>
-                    <p class="tagline">Format JSON Lines online</p>
+                    <p class="tagline">Turn raw JSON Lines into readable JSON</p>
                 </div>
             </a>
             <button id="darkModeToggle" class="dark-mode-toggle" type="button" aria-label="Switch between light and dark theme" title="Switch theme">
