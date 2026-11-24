@@ -18,13 +18,13 @@
     
     <!-- SEO Meta Tags -->
     <title>JSONL Beautifier – Free Online Viewer &amp; Formatter</title>
-    <meta name="description" content="View, format, search, and explore large JSONL files online. Free JSON Lines viewer and beautifier with syntax highlighting and collapsible records.">
+    <meta name="description" content="Free, private JSONL viewer and formatter. View, search, and format large JSON Lines files directly in your browser. No data uploaded or stored.">
     <meta name="keywords" content="jsonl beautifier, json lines formatter, format jsonl, jsonl viewer, online jsonl tool">
     <meta name="author" content="NatashaTheRobot, Inc">
 
     <!-- Open Graph meta tags -->
-    <meta property="og:title" content="JSONL Beautifier – Free Online Viewer &amp; Formatter" />
-    <meta property="og:description" content="View, format, search, and explore large JSONL files online. Free JSON Lines viewer and beautifier with syntax highlighting and collapsible records." />
+    <meta property="og:title" content="JSONL Beautifier – Free Online JSONL Viewer &amp; Formatter" />
+    <meta property="og:description" content="Easily view, format, and search large JSONL files with syntax highlighting, collapsible records, and line-by-line navigation. Free and private. Your data never leaves your browser." />
     <meta property="og:image" content="https://jsonlbeautifier.com/share.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -35,8 +35,8 @@
 
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="JSONL Beautifier – Free Online Viewer &amp; Formatter" />
-    <meta name="twitter:description" content="View, format, search, and explore large JSONL files online. Free JSON Lines viewer and beautifier with syntax highlighting and collapsible records." />
+    <meta name="twitter:title" content="JSONL Beautifier – Free Online JSONL Viewer &amp; Formatter" />
+    <meta name="twitter:description" content="Easily view, format, and search large JSONL files with syntax highlighting, collapsible records, and line-by-line navigation. Free and private. Your data never leaves your browser." />
     <meta name="twitter:image" content="https://jsonlbeautifier.com/share.png" />
     <meta name="twitter:image:alt" content="JSONL Beautifier logo between raw JSON Lines and formatted, color-coded output" />
     <meta name="twitter:site" content="@NatashaTheRobot" /> <!-- Optional -->
@@ -54,7 +54,7 @@
         "@type": "WebApplication",
         "name": "JSONL Beautifier",
         "url": "https://jsonlbeautifier.com/",
-        "description": "View, format, search, and explore large JSONL files online. Free JSON Lines viewer and beautifier with syntax highlighting and collapsible records.",
+        "description": "Free, private JSONL viewer and formatter. View, search, and format large JSON Lines files directly in your browser. No data uploaded or stored.",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Any",
         "browserRequirements": "Requires JavaScript",
@@ -72,6 +72,7 @@
             "Filter records by text",
             "Pagination and jump to a line number",
             "Large-file mode for input over 1 MB",
+            "Runs locally in the browser; no data uploaded or stored",
             "Light and dark themes"
         ]
     }
@@ -202,6 +203,7 @@
         html.theme-transitioning body,
         html.theme-transitioning header,
         html.theme-transitioning .tagline,
+        html.theme-transitioning .privacy-note,
         html.theme-transitioning .about h2,
         html.theme-transitioning .about-lead,
         html.theme-transitioning .about-card,
@@ -330,6 +332,27 @@
             color: var(--muted-text);
         }
 
+        .privacy-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            margin: 6px 0 0;
+            font-size: 13px;
+            line-height: 1.35;
+            color: var(--accent-color-dark);
+        }
+
+        .privacy-note svg {
+            flex: none;
+            inline-size: 15px;
+            block-size: 15px;
+            margin-block-start: 1px;
+        }
+
+        html.dark-mode .privacy-note {
+            color: var(--accent-color);
+        }
+
         .dark-mode-toggle {
             flex: none;
             display: grid;
@@ -369,8 +392,8 @@
             display: flex;
             flex-wrap: wrap;
             gap: clamp(14px, 0.5rem + 1.2vw, 24px);
-            height: clamp(440px, 100vh - 15rem, 62rem);
-            height: clamp(440px, 100dvh - 15rem, 62rem);
+            height: clamp(440px, 100vh - 16.5rem, 62rem);
+            height: clamp(440px, 100dvh - 16.5rem, 62rem);
         }
 
         .input-panel, .output-panel {
@@ -995,6 +1018,10 @@
                 <div class="brand-text">
                     <h1>JSONL Beautifier</h1>
                     <p class="tagline">View, format, and search JSONL files online.</p>
+                    <p class="privacy-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.700-7-5.500-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                        <span>100% local processing. No data uploaded or stored.</span>
+                    </p>
                 </div>
             </a>
             <button id="darkModeToggle" class="dark-mode-toggle" type="button" aria-label="Switch between light and dark theme" title="Switch theme">
@@ -1012,7 +1039,7 @@
                     </div>
                     <div class="toolbar-group">
                         <input type="file" id="fileUploadInput" accept=".jsonl,.ndjson,.json,.txt" hidden>
-                        <button id="uploadFileBtn" class="toolbar-btn" type="button">Upload file</button>
+                        <button id="uploadFileBtn" class="toolbar-btn" type="button">Open file</button>
                         <button id="clearInputBtn" class="toolbar-btn" type="button" style="display:none;">Clear</button>
                     </div>
                 </div>
@@ -1090,22 +1117,22 @@
                     <p>Pretty-print individual JSON records with syntax highlighting, indentation, and collapsible sections. Paste your JSONL data or open an existing file.</p>
                 </div>
                 <div class="about-card">
-                    <h3>Explore Your Data</h3>
-                    <p>Inspect machine learning datasets, fine-tuning data, application logs, API responses, coding agent logs, and database exports.</p>
-                </div>
-                <div class="about-card">
                     <h3>Your Data Stays Yours</h3>
                     <p>View, format, and search sensitive JSONL files without sending your data to a server. All processing happens locally in your browser. Nothing is uploaded or stored.</p>
                 </div>
+                <div class="about-card">
+                    <h3>Explore Your Data</h3>
+                    <p>Inspect machine learning datasets, fine-tuning data, application logs, API responses, Claude Code and Codex session logs, and database exports.</p>
+                </div>
                 <div class="about-card about-card-wide">
-                    <h3>What is JSONL?</h3>
+                    <h3>What Is JSONL?</h3>
                     <p>JSONL (JSON Lines), also known as NDJSON (newline-delimited JSON), is a data format where each line contains a valid JSON value. It is commonly used for large datasets, machine learning, logging, and streaming data.</p>
                 </div>
             </div>
         </section>
 
         <footer>
-            <p>A free online JSONL viewer and formatter built for large files. Easily read, search, and explore JSON Lines data with syntax highlighting, collapsible records, and line-by-line navigation.</p>
+            <p>A free, private online JSONL viewer and formatter built for large files. Easily read, search, and explore JSON Lines data with syntax highlighting, collapsible records, and line-by-line navigation. All processing happens locally in your browser.</p>
         </footer>
     </div>
 

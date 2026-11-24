@@ -1,6 +1,6 @@
 # JSONL Beautifier
 
-> A free online JSONL (JSON Lines) viewer and formatter. Paste JSONL text or open a file, and read each line as indented, syntax-highlighted JSON. It is built for large files.
+> A free, private online JSONL (JSON Lines) viewer and formatter. Paste JSONL text or open a file, and read each line as indented, syntax-highlighted JSON. It is built for large files, and all processing happens locally in the browser.
 
 Site: https://jsonlbeautifier.com/
 
@@ -19,7 +19,7 @@ This is the Markdown version of the home page, written for AI agents and other p
 ## How a person uses it
 
 1. Open https://jsonlbeautifier.com/.
-2. Paste JSONL into the Input panel, drop a file on it, or choose "Upload file". The file picker accepts `.jsonl`, `.ndjson`, `.json` and `.txt`.
+2. Paste JSONL into the Input panel, drop a file on it, or choose "Open file". The file picker accepts `.jsonl`, `.ndjson`, `.json` and `.txt`.
 3. Read the formatted records in the Output panel. Use "Filter lines..." to search, "Collapse All" to fold every record, and "Copy" to copy one record.
 
 ## For agents
@@ -68,13 +68,13 @@ Browse large JSONL files with dedicated large-file mode, pagination, and direct 
 
 Pretty-print individual JSON records with syntax highlighting, indentation, and collapsible sections. Paste your JSONL data or open an existing file.
 
-### Explore Your Data
-
-Inspect machine learning datasets, fine-tuning data, application logs, API responses, coding agent logs, and database exports.
-
 ### Your Data Stays Yours
 
 View, format, and search sensitive JSONL files without sending your data to a server. All processing happens locally in your browser. Nothing is uploaded or stored.
+
+### Explore Your Data
+
+Inspect machine learning datasets, fine-tuning data, application logs, API responses, Claude Code and Codex session logs, and database exports.
 
 ## Source
 

@@ -1,6 +1,6 @@
 # JSONL Beautifier
 
-> A free online JSONL (JSON Lines) viewer and formatter. Paste JSONL text or open a file, and read each line as indented, syntax-highlighted JSON. It runs in the browser, has no API and needs no account.
+> A free online JSONL (JSON Lines) viewer and formatter. Paste JSONL text or open a file, and read each line as indented, syntax-highlighted JSON. All processing happens locally in the browser: no data is uploaded or stored. It has no API and needs no account.
 
 Use it to read and inspect JSONL: one collapsible record per line, a text filter, pagination, a jump to a line number, and a large-file mode for input over 1 MB. It does not edit, convert or save files.
 
