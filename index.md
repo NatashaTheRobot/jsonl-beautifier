@@ -72,6 +72,10 @@ Pretty-print individual JSON records with syntax highlighting, indentation, and 
 
 Inspect machine learning datasets, fine-tuning data, application logs, API responses, coding agent logs, and database exports.
 
+### Your Data Stays Yours
+
+View, format, and search sensitive JSONL files without sending your data to a server. All processing happens locally in your browser. Nothing is uploaded or stored.
+
 ## Source
 
 The site's code is public: https://github.com/NatashaTheRobot/jsonl-beautifier

@@ -845,6 +845,10 @@
             box-shadow: var(--panel-shadow);
         }
 
+        .about-card-wide {
+            grid-column: 1 / -1;
+        }
+
         .about-card h3 {
             display: flex;
             align-items: center;
@@ -1090,6 +1094,10 @@
                     <p>Inspect machine learning datasets, fine-tuning data, application logs, API responses, coding agent logs, and database exports.</p>
                 </div>
                 <div class="about-card">
+                    <h3>Your Data Stays Yours</h3>
+                    <p>View, format, and search sensitive JSONL files without sending your data to a server. All processing happens locally in your browser. Nothing is uploaded or stored.</p>
+                </div>
+                <div class="about-card about-card-wide">
                     <h3>What is JSONL?</h3>
                     <p>JSONL (JSON Lines), also known as NDJSON (newline-delimited JSON), is a data format where each line contains a valid JSON value. It is commonly used for large datasets, machine learning, logging, and streaming data.</p>
                 </div>
