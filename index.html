@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#eef0f2" id="theme-color-meta">
 
     <!-- Standard favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -38,53 +39,83 @@
     
     <link rel="canonical" href="https://natashatherobot.github.io/jsonl-beautifier/" />
 
+    <!-- Apply saved theme before first paint to avoid white flash -->
+    <script>
+        (function () {
+            try {
+                const match = document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);
+                if (match && match[1] === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                    const meta = document.getElementById('theme-color-meta');
+                    if (meta) meta.setAttribute('content', '#1a1a1a');
+                }
+            } catch (_) {}
+        })();
+    </script>
+
     <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7705060245286159"
      crossorigin="anonymous"></script>
 
-    <!-- Prism.js CSS for syntax highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-dark.min.css" rel="stylesheet" id="prism-dark-theme" disabled />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
-
     <style>
         :root {
             --bg-color: #f8f9fa;
+            --bg-end-color: #e9ecef;
             --text-color: #212529;
+            --muted-text: #6c757d;
             --border-color: #dee2e6;
             --textarea-bg: #fff;
+            --surface-subtle: #f7f7f7;
+            --surface-hover: #efefef;
             --header-text: #000;
             --accent-color: #4CAF50; /* green */
             --accent-color-dark: #388E3C; /* darker green */
-        }
-        
-        @media (prefers-color-scheme: dark) {
-          .output-box, pre, code {
-            outline: none !important;
-            border: none !important; /* or use none if you want zero border */
-            box-shadow: none !important;
-          }
+            --error-text: #d32f2f;
+            --error-bg: #ffebee;
         }
 
+        html.dark-mode,
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --bg-end-color: #2a2a2a;
+            --text-color: #e6e6e6;
+            --muted-text: #a0a0a0;
+            --border-color: #444;
+            --textarea-bg: #2a2a2a;
+            --surface-subtle: #2c2c2c;
+            --surface-hover: #383838;
+            --header-text: #fff;
+            --accent-color: #66BB6A; /* lighter green */
+            --accent-color-dark: #43A047; /* medium green */
+            --error-text: #ef9a9a;
+            --error-bg: #4d2e2e;
+        }
+
+        html {
+            min-height: 100%;
+            background-color: #eef0f2;
+            background-image: linear-gradient(135deg, var(--bg-color), var(--bg-end-color));
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            overscroll-behavior: none;
+            color-scheme: light;
+        }
+
+        html.dark-mode {
+            background-color: #1a1a1a;
+            color-scheme: dark;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+            box-sizing: border-box;
+            background: transparent;
             color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
-        }
-        
-        body.dark-mode {
-            --bg-color: #1a1a1a;
-            --text-color: #e6e6e6;
-            --border-color: #444;
-            --textarea-bg: #2a2a2a;
-            --header-text: #fff;
-            --accent-color: #66BB6A; /* lighter green */
-            --accent-color-dark: #43A047; /* medium green */
-            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            overscroll-behavior: none;
+            transition: color 0.3s;
         }
 
         .container {
@@ -99,6 +130,7 @@
             border-bottom: 3px solid var(--accent-color);
             padding-bottom: 15px;
             margin-bottom: 20px;
+            gap: 12px;
         }
 
         h1 {
@@ -115,6 +147,7 @@
             border-radius: 8px;
             transition: background-color 0.2s, transform 0.1s;
             font-weight: 500;
+            flex-shrink: 0;
         }
 
         .dark-mode-toggle:hover {
@@ -127,14 +160,112 @@
             flex-wrap: wrap;
             gap: 20px;
             height: 65vh;
+            min-height: 420px;
         }
 
         .input-panel, .output-panel {
-            flex: 1;
-            min-width: 300px;
+            flex: 1 1 320px;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             height: 100%;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            background-color: var(--textarea-bg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .input-panel.drag-over {
+            outline: 2px dashed var(--accent-color);
+            outline-offset: -4px;
+        }
+
+        .panel-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 7px 12px;
+            background-color: var(--surface-subtle);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .panel-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .status-badge {
+            color: var(--muted-text);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .toolbar-btn {
+            padding: 4px 9px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: background-color 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+
+        .toolbar-btn:hover:not(:disabled) {
+            background-color: var(--surface-hover);
+            border-color: var(--accent-color);
+        }
+
+        .toolbar-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .toolbar-input {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .toolbar-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .filter-input {
+            width: 140px;
+            max-width: 100%;
+        }
+
+        .jump-input {
+            width: 72px;
+        }
+
+        .input-body {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         textarea {
@@ -143,156 +274,181 @@
             padding: 15px;
             font-family: "Courier New", Courier, monospace;
             font-size: 14px;
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
+            line-height: 1.5;
+            border: none;
+            outline: none;
             background-color: var(--textarea-bg);
             color: var(--text-color);
             resize: none;
             box-sizing: border-box;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            flex: 1;
+            overflow: auto;
+        }
+
+        .large-input-preview {
+            display: none;
+            flex: 1;
+            min-height: 0;
+            flex-direction: column;
+            background-color: var(--textarea-bg);
+        }
+
+        .large-input-preview.active {
+            display: flex;
+        }
+
+        .large-input-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 8px 12px;
+            background-color: rgba(76, 175, 80, 0.12);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .large-preview-code {
+            flex: 1;
+            margin: 0;
+            padding: 12px 15px;
+            overflow: auto;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--muted-text);
+            white-space: pre;
+            box-sizing: border-box;
         }
 
         .output-container {
             position: relative;
             width: 100%;
-            height: 100%;
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
+            flex: 1;
+            min-height: 0;
             background-color: var(--textarea-bg);
             overflow: auto;
             box-sizing: border-box;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .highlighted-output {
+        .output-placeholder {
             padding: 15px;
-            margin: 0;
-            font-family: "Courier New", Courier, monospace;
+            color: var(--muted-text);
             font-size: 14px;
-            line-height: 1.5;
-            background: transparent !important;
-            white-space: pre-wrap !important;
-            word-wrap: break-word;
-            word-break: break-all !important;
-            min-height: calc(100% - 30px);
-            box-sizing: border-box;
         }
 
-        /* Custom Prism theme adjustments */
-        .highlighted-output code {
-            background: transparent !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            white-space: pre-wrap !important;
-            word-wrap: break-word;
-            word-break: break-all !important;
+        .pagination-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 7px 12px;
+            background-color: var(--surface-subtle);
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            flex-shrink: 0;
         }
 
-        /* Dark mode Prism adjustments with green accents */
-        body.dark-mode .highlighted-output {
-            background: var(--textarea-bg) !important;
+        .pagination-bar.active {
+            display: flex;
         }
 
+        /* Syntax highlighting token colors (Prism Light default + Dark custom green palette) */
+        .token.property {
+            color: #905;
+        }
+        .token.string {
+            color: #690;
+        }
+        .token.number {
+            color: #905;
+        }
+        .token.boolean,
+        .token.null {
+            color: #905;
+        }
+        .token.punctuation {
+            color: #999;
+        }
+        .token.operator {
+            color: #9a6e3a;
+        }
+
+        html.dark-mode .token.property,
         body.dark-mode .token.property {
             color: #d1308a;
-            text-shadow: none !important;
         }
-        body.dark-mode .token.string { 
-            color: #81C784; 
-            text-shadow: none !important;
-        }   /* light green */
-        body.dark-mode .token.number { 
-            color: #26A69A; 
-            text-shadow: none !important;
-        }   /* teal */
+        html.dark-mode .token.string,
+        body.dark-mode .token.string {
+            color: #81C784;
+        }
+        html.dark-mode .token.number,
+        body.dark-mode .token.number {
+            color: #26A69A;
+        }
+        html.dark-mode .token.boolean,
+        html.dark-mode .token.null,
         body.dark-mode .token.boolean,
-        body.dark-mode .token.null { 
-            color: #FFC107; 
-            text-shadow: none !important;
-        }     /* amber */
+        body.dark-mode .token.null {
+            color: #FFC107;
+        }
+        html.dark-mode .token.punctuation,
+        html.dark-mode .token.operator,
         body.dark-mode .token.punctuation,
         body.dark-mode .token.operator {
-            color: #A5D6A7; /* Your custom green-gray color */
-            background: none !important; /* Forcefully remove any background */
-            border: none !important;      /* Remove any borders */
-            box-shadow: none !important; /* Remove any shadows */
-            text-shadow: none !important;
-        }
-        
-        .ad-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        footer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px solid var(--accent-color);
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-color);
+            color: #A5D6A7;
         }
 
-        .loading { opacity: 0.6; }
-
-        /* Scrollbar */
-        .output-container::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .output-container::-webkit-scrollbar-track {
-            background: var(--bg-color);
-        }
-        .output-container::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-        .output-container::-webkit-scrollbar-thumb:hover {
-            background: #999;
-        }
-        .output-container {
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) var(--bg-color);
+        /* Collapsible JSON entries & pure-CSS line numbers */
+        .json-entry {
+            contain: content;
         }
 
-        /* Adjustments for Prism line numbers */
-        .line-numbers .line-numbers-rows {
-            border-right: 1px solid var(--border-color) !important;
-            left: -4.5em !important;
-            top: 0em !important;
+        .json-entry.highlight-flash .json-header {
+            background-color: rgba(76, 175, 80, 0.28);
         }
 
-        .line-numbers-rows > span:before {
-            color: var(--text-color) !important;
-            opacity: 0.4;
-        }
-        
-        .highlighted-output.line-numbers {
-            padding-left: 4.5em !important;
-            padding-top: 2.5em !important;
-        }
-
-        /* Styles for collapsible JSON entries */
         .json-header {
             cursor: pointer;
-            padding: 8px 15px;
-            background-color: #f7f7f7;
+            padding: 8px 12px;
+            background-color: var(--surface-subtle);
             display: flex;
             align-items: center;
-            user-select: none; /* prevent text selection on click */
+            justify-content: space-between;
+            gap: 8px;
+            user-select: none;
             transition: background-color 0.2s;
+            font-size: 14px;
         }
 
         .json-header:hover {
-            background-color: #efefef;
+            background-color: var(--surface-hover);
+        }
+
+        .json-header-left {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 4px;
+        }
+
+        .json-title {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .toggle-arrow {
-            margin-right: 8px;
-            font-size: 0.9em;
+            margin-right: 4px;
+            font-size: 0.85em;
             width: 1em;
             text-align: center;
             display: inline-block;
+            flex-shrink: 0;
             transition: transform 0.15s ease-in-out;
         }
 
@@ -304,47 +460,229 @@
             display: none;
         }
 
+        .copy-entry-btn {
+            padding: 2px 8px;
+            font-size: 11px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .copy-entry-btn:hover {
+            border-color: var(--accent-color);
+            background-color: var(--surface-hover);
+        }
+
+        .json-code {
+            counter-reset: line;
+            margin: 0;
+            padding: 12px 15px 12px 0;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            box-sizing: border-box;
+        }
+
+        .json-code-line {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .json-code-line::before {
+            counter-increment: line;
+            content: counter(line);
+            flex: 0 0 auto;
+            min-width: 3.6em;
+            padding-right: 0.8em;
+            margin-right: 0.8em;
+            text-align: right;
+            color: var(--text-color);
+            opacity: 0.4;
+            border-right: 1px solid var(--border-color);
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        .json-code-text {
+            flex: 1;
+            min-width: 0;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-all;
+        }
+
+        .entry-placeholder {
+            padding: 12px 15px;
+            color: var(--muted-text);
+            font-family: "Courier New", Courier, monospace;
+            font-size: 13px;
+        }
+
+        .load-more-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px 12px 4.5em;
+            font-size: 12px;
+            color: var(--muted-text);
+        }
+
         .json-separator {
             border: none;
             border-top: 1px solid var(--border-color);
             margin: 0;
         }
-        
+
         .invalid-json .json-header {
-            color: #d32f2f;
-            cursor: default;
-            background-color: #ffebee;
+            color: var(--error-text);
+            background-color: var(--error-bg);
         }
 
-        /* Dark Mode Styles */
-        body.dark-mode .json-header {
-            background-color: #2c2c2c;
+        .invalid-raw {
+            margin: 0;
+            padding: 12px 15px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-all;
+            color: var(--text-color);
         }
 
-        body.dark-mode .json-header:hover {
-            background-color: #383838;
-        }
-        
-        body.dark-mode .invalid-json .json-header {
-            background-color: #4d2e2e;
+        .ad-container {
+            margin-top: 20px;
+            text-align: center;
         }
 
+        footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--accent-color);
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .loading {
+            opacity: 0.6;
+        }
+
+        /* Scrollbars */
+        .output-container::-webkit-scrollbar,
+        textarea::-webkit-scrollbar,
+        .large-preview-code::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .output-container::-webkit-scrollbar-track,
+        textarea::-webkit-scrollbar-track,
+        .large-preview-code::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        .output-container::-webkit-scrollbar-thumb,
+        textarea::-webkit-scrollbar-thumb,
+        .large-preview-code::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        .output-container::-webkit-scrollbar-thumb:hover,
+        textarea::-webkit-scrollbar-thumb:hover,
+        .large-preview-code::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+        .output-container,
+        textarea,
+        .large-preview-code {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-color);
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 12px;
+            }
+            .editor-container {
+                height: auto;
+                min-height: 0;
+            }
+            .input-panel, .output-panel {
+                flex: 1 1 100%;
+                height: 55vh;
+                min-height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>JSONL Beautifier</h1>
-            <button id="darkModeToggle" class="dark-mode-toggle">Toggle Dark Mode</button>
+            <button id="darkModeToggle" class="dark-mode-toggle" type="button">Toggle Dark Mode</button>
         </header>
 
         <div class="editor-container">
-            <div class="input-panel">
-                <textarea id="jsonlInput" placeholder="Paste your JSONL here..."></textarea>
+            <div class="input-panel" id="inputPanel">
+                <div class="panel-toolbar">
+                    <div class="toolbar-group">
+                        <span class="panel-label">Input</span>
+                        <span id="inputStats" class="status-badge"></span>
+                    </div>
+                    <div class="toolbar-group">
+                        <input type="file" id="fileUploadInput" accept=".jsonl,.ndjson,.json,.txt" hidden>
+                        <button id="uploadFileBtn" class="toolbar-btn" type="button">Upload file</button>
+                        <button id="clearInputBtn" class="toolbar-btn" type="button" style="display:none;">Clear</button>
+                    </div>
+                </div>
+                <div class="input-body">
+                    <textarea
+                        id="jsonlInput"
+                        placeholder="Paste your JSONL here (or drop a .jsonl file)..."
+                        spellcheck="false"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                    ></textarea>
+                    <div id="largeInputPreview" class="large-input-preview" tabindex="0">
+                        <div class="large-input-banner">
+                            <span id="largeInputInfo">Large file mode — keeping editor fast</span>
+                            <div class="toolbar-group">
+                                <button id="loadInTextareaBtn" class="toolbar-btn" type="button">Edit as text</button>
+                            </div>
+                        </div>
+                        <pre id="largePreviewCode" class="large-preview-code"></pre>
+                    </div>
+                </div>
             </div>
+
             <div class="output-panel">
+                <div class="panel-toolbar">
+                    <div class="toolbar-group">
+                        <span class="panel-label">Output</span>
+                        <span id="outputStats" class="status-badge"></span>
+                    </div>
+                    <div class="toolbar-group">
+                        <input id="filterInput" class="toolbar-input filter-input" type="search" placeholder="Filter lines..." aria-label="Filter JSONL lines">
+                        <button id="toggleAllBtn" class="toolbar-btn" type="button" disabled>Collapse All</button>
+                    </div>
+                </div>
                 <div id="jsonlOutput" class="output-container">
                     <!-- Beautified JSONL will be rendered here -->
+                </div>
+                <div id="paginationBar" class="pagination-bar">
+                    <div class="toolbar-group">
+                        <button id="prevPageBtn" class="toolbar-btn" type="button">&larr; Prev</button>
+                        <span id="pageInfo" class="status-badge"></span>
+                        <button id="nextPageBtn" class="toolbar-btn" type="button">Next &rarr;</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <label for="jumpLineInput" class="status-badge">Line #</label>
+                        <input id="jumpLineInput" class="toolbar-input jump-input" type="number" min="1" placeholder="1">
+                        <button id="jumpLineBtn" class="toolbar-btn" type="button">Go</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -367,143 +705,764 @@
         </footer>
     </div>
 
-    <!-- Prism.js JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-
     <script>
-        const jsonlInput = document.getElementById('jsonlInput');
-        const jsonlOutput = document.getElementById('jsonlOutput');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const prismDarkTheme = document.getElementById('prism-dark-theme');
+        (function () {
+            const PAGE_SIZE = 25;
+            const EAGER_RENDER_COUNT = 5;
+            const MAX_LINES_PER_CHUNK = 500;
+            const MAX_INVALID_PREVIEW_CHARS = 20000;
+            const LARGE_INPUT_THRESHOLD = 1024 * 1024; // 1 MB — keeps textarea responsive on huge pastes
 
-        function setCookie(name, value, days) {
-            let expires = "";
-            if (days) {
-                const date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
+            const inputPanel = document.getElementById('inputPanel');
+            const jsonlInput = document.getElementById('jsonlInput');
+            const jsonlOutput = document.getElementById('jsonlOutput');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const themeColorMeta = document.getElementById('theme-color-meta');
+            const inputStats = document.getElementById('inputStats');
+            const outputStats = document.getElementById('outputStats');
+            const uploadFileBtn = document.getElementById('uploadFileBtn');
+            const fileUploadInput = document.getElementById('fileUploadInput');
+            const clearInputBtn = document.getElementById('clearInputBtn');
+            const largeInputPreview = document.getElementById('largeInputPreview');
+            const largeInputInfo = document.getElementById('largeInputInfo');
+            const largePreviewCode = document.getElementById('largePreviewCode');
+            const loadInTextareaBtn = document.getElementById('loadInTextareaBtn');
+            const filterInput = document.getElementById('filterInput');
+            const toggleAllBtn = document.getElementById('toggleAllBtn');
+            const paginationBar = document.getElementById('paginationBar');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            const jumpLineInput = document.getElementById('jumpLineInput');
+            const jumpLineBtn = document.getElementById('jumpLineBtn');
+
+            // Application state
+            let currentSourceText = '';
+            let isLargeInputMode = false;
+            let lineIndex = { starts: new Int32Array(0), ends: new Int32Array(0), count: 0 };
+            let filteredIndices = null; // null => all lines [0..count-1]
+            let currentPage = 1;
+            let defaultCollapsed = false;
+            let entryObserver = null;
+            let debounceTimer = null;
+            let filterDebounceTimer = null;
+            let skipNextInputEvent = false;
+
+            // --- Theme management ---
+            function setCookie(name, value, days) {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                const secureFlag = window.location.protocol === 'https:' ? '; secure' : '';
+                document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax' + secureFlag;
             }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; secure";
-        }
 
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length);
-            }
-            return null;
-        }
-
-        function enableDarkMode() {
-            document.body.classList.add('dark-mode');
-            if (prismDarkTheme) prismDarkTheme.disabled = false;
-            setCookie('theme', 'dark', 365);
-        }
-
-        function disableDarkMode() {
-            document.body.classList.remove('dark-mode');
-            if (prismDarkTheme) prismDarkTheme.disabled = true;
-            setCookie('theme', 'light', 365);
-        }
-
-        darkModeToggle.addEventListener('click', () => {
-            if (document.body.classList.contains('dark-mode')) disableDarkMode();
-            else enableDarkMode();
-        });
-
-        if (getCookie('theme') === 'dark') enableDarkMode();
-
-        let debounceTimer;
-        function formatAndHighlight() {
-            const inputText = jsonlInput.value.trim();
-            jsonlOutput.innerHTML = ''; // Clear previous output
-
-            if (!inputText) {
-                return;
+            function getCookie(name) {
+                const nameEQ = name + '=';
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+                }
+                return null;
             }
 
-            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+            function enableDarkMode() {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+                if (themeColorMeta) themeColorMeta.setAttribute('content', '#1a1a1a');
+                setCookie('theme', 'dark', 365);
+            }
 
-            lines.forEach((line, index) => {
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'json-entry';
-                
+            function disableDarkMode() {
+                document.documentElement.classList.remove('dark-mode');
+                document.body.classList.remove('dark-mode');
+                if (themeColorMeta) themeColorMeta.setAttribute('content', '#eef0f2');
+                setCookie('theme', 'light', 365);
+            }
+
+            darkModeToggle.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark-mode')) disableDarkMode();
+                else enableDarkMode();
+            });
+
+            if (getCookie('theme') === 'dark' || document.documentElement.classList.contains('dark-mode')) {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+                if (themeColorMeta) themeColorMeta.setAttribute('content', '#1a1a1a');
+            }
+
+            // --- Utilities ---
+            function formatBytes(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+
+            function escapeHtml(str) {
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }
+
+            // Fast single-pass tokenizer for JSON.stringify(..., null, 2) output
+            const JSON_TOKEN_RE = /("(?:\\.|[^"\\])*")(:)?|\b(true|false)\b|\b(null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|([{}\[\],])/g;
+
+            function highlightJsonLine(line) {
+                return line.replace(JSON_TOKEN_RE, (match, str, colon, bool, nil, num, punct) => {
+                    if (str !== undefined) {
+                        const escaped = escapeHtml(str);
+                        if (colon) {
+                            return '<span class="token property">' + escaped + '</span><span class="token operator">:</span>';
+                        }
+                        return '<span class="token string">' + escaped + '</span>';
+                    }
+                    if (bool !== undefined) return '<span class="token boolean">' + bool + '</span>';
+                    if (nil !== undefined) return '<span class="token null">null</span>';
+                    if (num !== undefined) return '<span class="token number">' + num + '</span>';
+                    if (punct !== undefined) return '<span class="token punctuation">' + punct + '</span>';
+                    return escapeHtml(match);
+                });
+            }
+
+            function buildLinesHtml(formattedLines, startIdx, endIdx) {
+                const parts = new Array(endIdx - startIdx);
+                for (let i = startIdx; i < endIdx; i++) {
+                    parts[i - startIdx] = '<div class="json-code-line"><span class="json-code-text">' + highlightJsonLine(formattedLines[i]) + '</span></div>';
+                }
+                return parts.join('');
+            }
+
+            function indexLines(text) {
+                const starts = [];
+                const ends = [];
+                const len = text.length;
+                let pos = 0;
+
+                while (pos < len) {
+                    let nl = text.indexOf('\n', pos);
+                    if (nl === -1) nl = len;
+
+                    let s = pos;
+                    let e = nl;
+                    if (starts.length === 0 && s < e && text.charCodeAt(s) === 0xFEFF) {
+                        s++;
+                    }
+                    while (s < e && text.charCodeAt(s) <= 32) s++;
+                    while (e > s && text.charCodeAt(e - 1) <= 32) e--;
+
+                    if (e > s) {
+                        starts.push(s);
+                        ends.push(e);
+                    }
+                    pos = nl + 1;
+                }
+
+                return {
+                    starts: new Int32Array(starts),
+                    ends: new Int32Array(ends),
+                    count: starts.length
+                };
+            }
+
+            function getRawLine(entryIdx) {
+                return currentSourceText.slice(lineIndex.starts[entryIdx], lineIndex.ends[entryIdx]);
+            }
+
+            function getVisibleCount() {
+                return filteredIndices ? filteredIndices.length : lineIndex.count;
+            }
+
+            function getEntryIndexAtPosition(pos) {
+                return filteredIndices ? filteredIndices[pos] : pos;
+            }
+
+            // --- Large input mode helpers ---
+            function showLargeInputMode(text, labelPrefix) {
+                isLargeInputMode = true;
+                jsonlInput.style.display = 'none';
+                jsonlInput.value = '';
+                largeInputPreview.classList.add('active');
+
+                const sizeLabel = formatBytes(text.length);
+                const previewLines = [];
+                const previewLimit = Math.min(lineIndex.count, 30);
+                for (let i = 0; i < previewLimit; i++) {
+                    const line = getRawLine(i);
+                    previewLines.push(line.length > 400 ? line.slice(0, 400) + ' …' : line);
+                }
+                if (lineIndex.count > previewLimit) {
+                    previewLines.push('\n... (' + (lineIndex.count - previewLimit).toLocaleString() + ' more lines — all indexed and browsable on the right)');
+                }
+
+                largeInputInfo.textContent = (labelPrefix ? labelPrefix + ' · ' : '') +
+                    sizeLabel + ' · ' + lineIndex.count.toLocaleString() + ' lines (fast mode)';
+                largePreviewCode.textContent = previewLines.join('\n');
+            }
+
+            function exitLargeInputMode(populateTextarea) {
+                isLargeInputMode = false;
+                largeInputPreview.classList.remove('active');
+                largePreviewCode.textContent = '';
+                jsonlInput.style.display = '';
+                if (populateTextarea) {
+                    jsonlInput.setAttribute('wrap', 'off');
+                    skipNextInputEvent = true;
+                    jsonlInput.value = currentSourceText;
+                    skipNextInputEvent = false;
+                } else {
+                    jsonlInput.removeAttribute('wrap');
+                }
+            }
+
+            // --- Entry rendering (lazy & chunked) ---
+            function populateEntryBody(entryEl) {
+                if (entryEl.dataset.rendered === 'true') return;
+                entryEl.dataset.rendered = 'true';
+
+                const entryIdx = Number(entryEl.dataset.entryIndex);
+                const rawLine = getRawLine(entryIdx);
+                const contentDiv = entryEl.querySelector('.collapsible-content');
+                const titleEl = entryEl.querySelector('.json-title');
+                const copyBtn = entryEl.querySelector('.copy-entry-btn');
+
+                contentDiv.textContent = '';
+
                 try {
-                    const jsonObj = JSON.parse(line);
+                    const jsonObj = JSON.parse(rawLine);
                     const formattedJson = JSON.stringify(jsonObj, null, 2);
+                    const formattedLines = formattedJson.split('\n');
+
+                    const codeBox = document.createElement('div');
+                    codeBox.className = 'json-code';
+
+                    let renderedCount = Math.min(formattedLines.length, MAX_LINES_PER_CHUNK);
+                    codeBox.innerHTML = buildLinesHtml(formattedLines, 0, renderedCount);
+                    contentDiv.appendChild(codeBox);
+
+                    if (renderedCount < formattedLines.length) {
+                        const loadMoreBar = document.createElement('div');
+                        loadMoreBar.className = 'load-more-bar';
+
+                        const infoSpan = document.createElement('span');
+                        const moreBtn = document.createElement('button');
+                        moreBtn.type = 'button';
+                        moreBtn.className = 'toolbar-btn';
+
+                        const allBtn = document.createElement('button');
+                        allBtn.type = 'button';
+                        allBtn.className = 'toolbar-btn';
+                        allBtn.textContent = 'Show all';
+
+                        const updateBar = () => {
+                            const remaining = formattedLines.length - renderedCount;
+                            if (remaining <= 0) {
+                                loadMoreBar.remove();
+                                return;
+                            }
+                            infoSpan.textContent = 'Showing ' + renderedCount.toLocaleString() + ' of ' + formattedLines.length.toLocaleString() + ' lines';
+                            moreBtn.textContent = 'Show ' + Math.min(MAX_LINES_PER_CHUNK, remaining).toLocaleString() + ' more';
+                        };
+
+                        moreBtn.addEventListener('click', () => {
+                            const nextEnd = Math.min(formattedLines.length, renderedCount + MAX_LINES_PER_CHUNK);
+                            codeBox.insertAdjacentHTML('beforeend', buildLinesHtml(formattedLines, renderedCount, nextEnd));
+                            renderedCount = nextEnd;
+                            updateBar();
+                        });
+
+                        allBtn.addEventListener('click', () => {
+                            codeBox.insertAdjacentHTML('beforeend', buildLinesHtml(formattedLines, renderedCount, formattedLines.length));
+                            renderedCount = formattedLines.length;
+                            updateBar();
+                        });
+
+                        updateBar();
+                        loadMoreBar.appendChild(infoSpan);
+                        loadMoreBar.appendChild(moreBtn);
+                        loadMoreBar.appendChild(allBtn);
+                        contentDiv.appendChild(loadMoreBar);
+                    }
+                } catch (err) {
+                    entryEl.classList.add('invalid-json');
+                    if (titleEl) {
+                        const msg = err && err.message ? ' — ' + err.message : '';
+                        titleEl.textContent = 'Invalid JSON (Line ' + (entryIdx + 1) + ')' + msg;
+                    }
+                    if (copyBtn) copyBtn.style.display = 'none';
+
+                    const pre = document.createElement('pre');
+                    pre.className = 'invalid-raw';
+                    if (rawLine.length > MAX_INVALID_PREVIEW_CHARS) {
+                        pre.textContent = rawLine.slice(0, MAX_INVALID_PREVIEW_CHARS) + '\n… (truncated ' + (rawLine.length - MAX_INVALID_PREVIEW_CHARS).toLocaleString() + ' chars)';
+                    } else {
+                        pre.textContent = rawLine;
+                    }
+                    contentDiv.appendChild(pre);
+                }
+            }
+
+            function disconnectObserver() {
+                if (entryObserver) {
+                    entryObserver.disconnect();
+                    entryObserver = null;
+                }
+            }
+
+            function ensureObserver() {
+                if (entryObserver || !('IntersectionObserver' in window)) return entryObserver;
+                entryObserver = new IntersectionObserver((entries) => {
+                    for (let i = 0; i < entries.length; i++) {
+                        if (entries[i].isIntersecting) {
+                            const el = entries[i].target;
+                            entryObserver.unobserve(el);
+                            if (!el.classList.contains('collapsed')) {
+                                populateEntryBody(el);
+                            }
+                        }
+                    }
+                }, {
+                    root: jsonlOutput,
+                    rootMargin: '600px 0px'
+                });
+                return entryObserver;
+            }
+
+            function updatePaginationUi(totalVisible) {
+                const totalPages = Math.max(1, Math.ceil(totalVisible / PAGE_SIZE));
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                if (totalVisible > PAGE_SIZE) {
+                    paginationBar.classList.add('active');
+                    const startPos = (currentPage - 1) * PAGE_SIZE + 1;
+                    const endPos = Math.min(totalVisible, currentPage * PAGE_SIZE);
+                    pageInfo.textContent = 'Page ' + currentPage.toLocaleString() + ' / ' + totalPages.toLocaleString() +
+                        ' (' + startPos.toLocaleString() + '–' + endPos.toLocaleString() + ')';
+                    prevPageBtn.disabled = currentPage <= 1;
+                    nextPageBtn.disabled = currentPage >= totalPages;
+                    jumpLineInput.max = String(lineIndex.count);
+                } else {
+                    paginationBar.classList.remove('active');
+                }
+            }
+
+            function updateStatsUi() {
+                const total = lineIndex.count;
+                if (total === 0) {
+                    inputStats.textContent = '';
+                    outputStats.textContent = '';
+                    clearInputBtn.style.display = 'none';
+                    toggleAllBtn.disabled = true;
+                    return;
+                }
+
+                inputStats.textContent = formatBytes(currentSourceText.length) + ' · ' + total.toLocaleString() + (total === 1 ? ' line' : ' lines');
+                clearInputBtn.style.display = '';
+                toggleAllBtn.disabled = false;
+                toggleAllBtn.textContent = defaultCollapsed ? 'Expand All' : 'Collapse All';
+
+                if (filteredIndices) {
+                    outputStats.textContent = filteredIndices.length.toLocaleString() + ' of ' + total.toLocaleString() + ' matching';
+                } else {
+                    outputStats.textContent = total.toLocaleString() + (total === 1 ? ' entry' : ' entries');
+                }
+            }
+
+            function renderCurrentPage(scrollToEntryIndex) {
+                disconnectObserver();
+                jsonlOutput.textContent = '';
+
+                const totalVisible = getVisibleCount();
+                updateStatsUi();
+                updatePaginationUi(totalVisible);
+
+                if (lineIndex.count === 0) {
+                    return;
+                }
+
+                if (totalVisible === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'output-placeholder';
+                    empty.textContent = 'No JSONL lines match your filter.';
+                    jsonlOutput.appendChild(empty);
+                    return;
+                }
+
+                const startPos = (currentPage - 1) * PAGE_SIZE;
+                const endPos = Math.min(totalVisible, startPos + PAGE_SIZE);
+
+                const fragment = document.createDocumentFragment();
+                const lazyEntries = [];
+                let targetEntryEl = null;
+                let targetPos = -1;
+
+                if (scrollToEntryIndex !== undefined) {
+                    for (let p = startPos; p < endPos; p++) {
+                        if (getEntryIndexAtPosition(p) === scrollToEntryIndex) {
+                            targetPos = p;
+                            break;
+                        }
+                    }
+                }
+
+                for (let pos = startPos; pos < endPos; pos++) {
+                    const entryIdx = getEntryIndexAtPosition(pos);
+                    const entryDiv = document.createElement('div');
+                    entryDiv.className = defaultCollapsed ? 'json-entry collapsed' : 'json-entry';
+                    entryDiv.dataset.entryIndex = String(entryIdx);
 
                     const headerDiv = document.createElement('div');
                     headerDiv.className = 'json-header';
-                    headerDiv.innerHTML = `<span class="toggle-arrow">▼</span> <span>JSON Line ${index + 1}</span>`; // Simple summary
+
+                    const headerLeft = document.createElement('div');
+                    headerLeft.className = 'json-header-left';
+
+                    const arrow = document.createElement('span');
+                    arrow.className = 'toggle-arrow';
+                    arrow.textContent = '▼';
+
+                    const title = document.createElement('span');
+                    title.className = 'json-title';
+                    title.textContent = 'JSON Line ' + (entryIdx + 1);
+
+                    headerLeft.appendChild(arrow);
+                    headerLeft.appendChild(title);
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.type = 'button';
+                    copyBtn.className = 'copy-entry-btn';
+                    copyBtn.textContent = 'Copy';
+
+                    headerDiv.appendChild(headerLeft);
+                    headerDiv.appendChild(copyBtn);
 
                     const contentDiv = document.createElement('div');
                     contentDiv.className = 'collapsible-content';
 
-                    const pre = document.createElement('pre');
-                    pre.className = 'highlighted-output line-numbers';
-                    const code = document.createElement('code');
-                    code.className = 'language-json';
-                    code.textContent = formattedJson;
-
-                    pre.appendChild(code);
-                    contentDiv.appendChild(pre);
-
                     entryDiv.appendChild(headerDiv);
                     entryDiv.appendChild(contentDiv);
 
-                    jsonlOutput.appendChild(entryDiv);
+                    const offsetInPage = pos - startPos;
+                    const isJumpTarget = targetPos !== -1 && pos === targetPos;
+                    const isNearJumpTarget = targetPos !== -1 && Math.abs(pos - targetPos) <= 4;
+                    if (isJumpTarget) {
+                        targetEntryEl = entryDiv;
+                        entryDiv.classList.remove('collapsed');
+                    }
 
-                } catch (e) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'json-entry invalid-json';
-                    errorDiv.innerHTML = `<div class="json-header">Invalid JSON</div><div class="collapsible-content"><pre>${line}</pre></div>`;
-                    jsonlOutput.appendChild(errorDiv);
+                    if (!entryDiv.classList.contains('collapsed')) {
+                        if (offsetInPage < EAGER_RENDER_COUNT || isJumpTarget || isNearJumpTarget) {
+                            populateEntryBody(entryDiv);
+                        } else {
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'entry-placeholder';
+                            placeholder.textContent = 'Loading JSON Line ' + (entryIdx + 1) + '...';
+                            contentDiv.appendChild(placeholder);
+                            lazyEntries.push(entryDiv);
+                        }
+                    }
+
+                    fragment.appendChild(entryDiv);
+
+                    if (pos < endPos - 1) {
+                        const separator = document.createElement('hr');
+                        separator.className = 'json-separator';
+                        fragment.appendChild(separator);
+                    }
                 }
 
-                // Add separator
-                if (index < lines.length - 1) {
-                    const separator = document.createElement('hr');
-                    separator.className = 'json-separator';
-                    jsonlOutput.appendChild(separator);
+                jsonlOutput.appendChild(fragment);
+
+                if (lazyEntries.length > 0 && 'IntersectionObserver' in window) {
+                    const obs = ensureObserver();
+                    for (let i = 0; i < lazyEntries.length; i++) {
+                        obs.observe(lazyEntries[i]);
+                    }
+                } else {
+                    for (let i = 0; i < lazyEntries.length; i++) {
+                        populateEntryBody(lazyEntries[i]);
+                    }
+                }
+
+                if (targetEntryEl) {
+                    targetEntryEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+                    targetEntryEl.classList.add('highlight-flash');
+                    setTimeout(() => targetEntryEl.classList.remove('highlight-flash'), 1200);
+                } else {
+                    jsonlOutput.scrollTop = 0;
+                }
+            }
+
+            function applyFilter(query) {
+                const q = query.trim().toLowerCase();
+                if (!q || lineIndex.count === 0) {
+                    filteredIndices = null;
+                } else {
+                    const matches = [];
+                    for (let i = 0; i < lineIndex.count; i++) {
+                        if (getRawLine(i).toLowerCase().indexOf(q) !== -1) {
+                            matches.push(i);
+                        }
+                    }
+                    filteredIndices = matches;
+                }
+                currentPage = 1;
+                renderCurrentPage();
+            }
+
+            function processSourceText(text, options) {
+                const opts = options || {};
+                currentSourceText = text;
+                lineIndex = indexLines(text);
+                currentPage = 1;
+
+                if (opts.useLargeMode) {
+                    showLargeInputMode(text, opts.labelPrefix);
+                }
+
+                if (filterInput.value.trim()) {
+                    applyFilter(filterInput.value);
+                } else {
+                    filteredIndices = null;
+                    renderCurrentPage();
+                }
+            }
+
+            function handleIncomingLargeOrFileText(text, labelPrefix) {
+                clearTimeout(debounceTimer);
+                if (text.length > LARGE_INPUT_THRESHOLD) {
+                    processSourceText(text, { useLargeMode: true, labelPrefix: labelPrefix });
+                } else {
+                    if (isLargeInputMode) exitLargeInputMode(false);
+                    skipNextInputEvent = true;
+                    jsonlInput.value = text;
+                    skipNextInputEvent = false;
+                    processSourceText(text);
+                }
+            }
+
+            // --- Input event listeners ---
+            jsonlInput.addEventListener('paste', (event) => {
+                const clipboard = event.clipboardData || window.clipboardData;
+                if (!clipboard) return;
+                const pastedText = clipboard.getData('text');
+                if (!pastedText) return;
+
+                const start = jsonlInput.selectionStart || 0;
+                const end = jsonlInput.selectionEnd || 0;
+                const existing = jsonlInput.value;
+                const combinedLength = existing.length - (end - start) + pastedText.length;
+
+                if (combinedLength > LARGE_INPUT_THRESHOLD) {
+                    event.preventDefault();
+                    const combined = existing.slice(0, start) + pastedText + existing.slice(end);
+                    handleIncomingLargeOrFileText(combined, 'Pasted');
                 }
             });
 
-            if (window.Prism) {
-                Prism.highlightAllUnder(jsonlOutput);
+            // Allow pasting directly over the large-input preview panel to replace content
+            largeInputPreview.addEventListener('paste', (event) => {
+                const clipboard = event.clipboardData || window.clipboardData;
+                if (!clipboard) return;
+                const pastedText = clipboard.getData('text');
+                if (!pastedText) return;
+                event.preventDefault();
+                handleIncomingLargeOrFileText(pastedText, 'Pasted');
+            });
+
+            jsonlInput.addEventListener('input', () => {
+                if (skipNextInputEvent) return;
+                jsonlOutput.classList.add('loading');
+                clearTimeout(debounceTimer);
+                const delay = jsonlInput.value.length > 200000 ? 350 : 200;
+                debounceTimer = setTimeout(() => {
+                    processSourceText(jsonlInput.value);
+                    jsonlOutput.classList.remove('loading');
+                }, delay);
+            });
+
+            loadInTextareaBtn.addEventListener('click', () => {
+                exitLargeInputMode(true);
+                jsonlInput.focus();
+            });
+
+            clearInputBtn.addEventListener('click', () => {
+                clearTimeout(debounceTimer);
+                if (isLargeInputMode) exitLargeInputMode(false);
+                jsonlInput.value = '';
+                filterInput.value = '';
+                defaultCollapsed = false;
+                processSourceText('');
+                jsonlInput.focus();
+            });
+
+            // File upload & drag-and-drop support
+            uploadFileBtn.addEventListener('click', () => {
+                fileUploadInput.value = '';
+                fileUploadInput.click();
+            });
+
+            fileUploadInput.addEventListener('change', (event) => {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                file.text().then((text) => {
+                    handleIncomingLargeOrFileText(text, file.name);
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach((evtName) => {
+                inputPanel.addEventListener(evtName, (e) => {
+                    e.preventDefault();
+                    inputPanel.classList.add('drag-over');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach((evtName) => {
+                inputPanel.addEventListener(evtName, (e) => {
+                    e.preventDefault();
+                    inputPanel.classList.remove('drag-over');
+                });
+            });
+
+            inputPanel.addEventListener('drop', (e) => {
+                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (!file) return;
+                file.text().then((text) => {
+                    handleIncomingLargeOrFileText(text, file.name);
+                });
+            });
+
+            // --- Output controls ---
+            filterInput.addEventListener('input', () => {
+                clearTimeout(filterDebounceTimer);
+                filterDebounceTimer = setTimeout(() => {
+                    applyFilter(filterInput.value);
+                }, 150);
+            });
+
+            toggleAllBtn.addEventListener('click', () => {
+                defaultCollapsed = !defaultCollapsed;
+                toggleAllBtn.textContent = defaultCollapsed ? 'Expand All' : 'Collapse All';
+
+                const entries = jsonlOutput.querySelectorAll('.json-entry');
+                const obs = !defaultCollapsed ? ensureObserver() : null;
+                for (let i = 0; i < entries.length; i++) {
+                    const entry = entries[i];
+                    if (defaultCollapsed) {
+                        entry.classList.add('collapsed');
+                    } else {
+                        entry.classList.remove('collapsed');
+                        if (entry.dataset.rendered !== 'true') {
+                            if (i < EAGER_RENDER_COUNT || !obs) {
+                                populateEntryBody(entry);
+                            } else {
+                                const contentDiv = entry.querySelector('.collapsible-content');
+                                if (contentDiv && !contentDiv.firstChild) {
+                                    const placeholder = document.createElement('div');
+                                    placeholder.className = 'entry-placeholder';
+                                    placeholder.textContent = 'Loading JSON Line ' + (Number(entry.dataset.entryIndex) + 1) + '...';
+                                    contentDiv.appendChild(placeholder);
+                                }
+                                obs.observe(entry);
+                            }
+                        }
+                    }
+                }
+            });
+
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderCurrentPage();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(getVisibleCount() / PAGE_SIZE);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderCurrentPage();
+                }
+            });
+
+            function jumpToLine() {
+                const lineNum = parseInt(jumpLineInput.value, 10);
+                if (!lineNum || lineNum < 1 || lineNum > lineIndex.count) return;
+                const targetEntryIdx = lineNum - 1;
+
+                // Clear active filter if target line isn't in filtered subset
+                if (filteredIndices) {
+                    const posInFiltered = filteredIndices.indexOf(targetEntryIdx);
+                    if (posInFiltered === -1) {
+                        filterInput.value = '';
+                        filteredIndices = null;
+                        currentPage = Math.floor(targetEntryIdx / PAGE_SIZE) + 1;
+                    } else {
+                        currentPage = Math.floor(posInFiltered / PAGE_SIZE) + 1;
+                    }
+                } else {
+                    currentPage = Math.floor(targetEntryIdx / PAGE_SIZE) + 1;
+                }
+
+                renderCurrentPage(targetEntryIdx);
             }
-        }
 
-        jsonlInput.addEventListener('input', () => {
-            jsonlOutput.classList.add('loading');
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                formatAndHighlight();
-                jsonlOutput.classList.remove('loading');
-            }, 300);
-        });
+            jumpLineBtn.addEventListener('click', jumpToLine);
+            jumpLineInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') jumpToLine();
+            });
 
-        jsonlOutput.addEventListener('click', (event) => {
-            const header = event.target.closest('.json-header');
-            if (!header) return;
+            // Click delegation for expand/collapse & copy
+            jsonlOutput.addEventListener('click', (event) => {
+                const copyBtn = event.target.closest('.copy-entry-btn');
+                if (copyBtn) {
+                    event.stopPropagation();
+                    const entryEl = copyBtn.closest('.json-entry');
+                    if (!entryEl) return;
+                    const entryIdx = Number(entryEl.dataset.entryIndex);
+                    const rawLine = getRawLine(entryIdx);
+                    let textToCopy = rawLine;
+                    try {
+                        textToCopy = JSON.stringify(JSON.parse(rawLine), null, 2);
+                    } catch (_) {}
 
-            const entry = header.parentElement;
-            entry.classList.toggle('collapsed');
+                    const onCopied = () => {
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1200);
+                    };
 
-            const arrow = header.querySelector('.toggle-arrow');
-            if (arrow) {
-                arrow.textContent = entry.classList.contains('collapsed') ? '►' : '▼';
-            }
-        });
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(textToCopy).then(onCopied).catch(() => {});
+                    } else {
+                        const tmp = document.createElement('textarea');
+                        tmp.value = textToCopy;
+                        document.body.appendChild(tmp);
+                        tmp.select();
+                        try { document.execCommand('copy'); onCopied(); } catch (_) {}
+                        tmp.remove();
+                    }
+                    return;
+                }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.Prism) Prism.highlightAll();
-        });
+                const header = event.target.closest('.json-header');
+                if (!header) return;
+
+                const entry = header.closest('.json-entry');
+                if (!entry) return;
+
+                const willExpand = entry.classList.contains('collapsed');
+                entry.classList.toggle('collapsed');
+                if (willExpand && entry.dataset.rendered !== 'true') {
+                    populateEntryBody(entry);
+                }
+            });
+        })();
     </script>
 </body>
 </html>
