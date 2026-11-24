@@ -98,12 +98,10 @@
             background-attachment: fixed;
             background-repeat: no-repeat;
             overscroll-behavior: none;
-            color-scheme: light;
         }
 
         html.dark-mode {
             background-color: #1a1a1a;
-            color-scheme: dark;
         }
 
         body {
@@ -249,6 +247,10 @@
 
         .toolbar-input:focus {
             border-color: var(--accent-color);
+        }
+
+        html.dark-mode .toolbar-input {
+            color-scheme: dark;
         }
 
         .filter-input {
@@ -556,6 +558,17 @@
         .ad-container {
             margin-top: 20px;
             text-align: center;
+            color-scheme: light;
+        }
+
+        ins.adsbygoogle,
+        ins.adsbygoogle iframe {
+            color-scheme: light;
+            background: transparent !important;
+        }
+
+        ins.adsbygoogle[data-ad-status="unfilled"] {
+            display: none !important;
         }
 
         footer {
