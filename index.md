@@ -27,7 +27,7 @@ This is the Markdown version of the home page, written for AI agents and other p
 - The tool is a single static page. Parsing and formatting run as JavaScript in the visitor's browser, and the page's own script makes no network requests with the pasted or opened data.
 - There is no API, no account and no sign-in. An agent that cannot run a browser cannot format data here; send the person the link instead.
 - Use it for reading and inspecting JSONL. It does not edit, convert or save files.
-- The page loads Google AdSense.
+- The page loads no third-party scripts, ads or trackers.
 
 ## Input format
 
