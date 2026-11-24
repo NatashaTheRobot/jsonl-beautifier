@@ -24,7 +24,7 @@
 
     <!-- Open Graph meta tags -->
     <meta property="og:title" content="JSONL Beautifier | Format JSON Lines Online" />
-    <meta property="og:description" content="A simple, free, and fast online tool to beautify and format JSON Lines (JSONL) data." />
+    <meta property="og:description" content="Turn raw JSON Lines into readable JSON. A simple, free, and fast online tool to format JSONL data." />
     <meta property="og:image" content="https://jsonlbeautifier.com/share.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
@@ -36,7 +36,7 @@
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="JSONL Beautifier | Format JSON Lines Online" />
-    <meta name="twitter:description" content="A simple, free, and fast online tool to beautify and format JSON Lines (JSONL) data." />
+    <meta name="twitter:description" content="Turn raw JSON Lines into readable JSON. A simple, free, and fast online tool to format JSONL data." />
     <meta name="twitter:image" content="https://jsonlbeautifier.com/share.png" />
     <meta name="twitter:image:alt" content="JSONL Beautifier logo between raw JSON Lines and formatted, color-coded output" />
     <meta name="twitter:site" content="@NatashaTheRobot" /> <!-- Optional -->
@@ -168,7 +168,6 @@
 
         html.theme-transitioning body,
         html.theme-transitioning header,
-        html.theme-transitioning .tagline,
         html.theme-transitioning h1,
         html.theme-transitioning footer,
         html.theme-transitioning .input-panel,
@@ -283,15 +282,6 @@
             letter-spacing: -0.02em;
             line-height: 1.15;
             color: var(--header-text);
-        }
-
-        .tagline {
-            margin: 5px 0 0;
-            font-size: 14px;
-            color: var(--muted-text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .dark-mode-toggle {
@@ -860,9 +850,6 @@
         }
 
         @media (max-width: 720px) {
-            .tagline {
-                display: none;
-            }
             .editor-container {
                 height: auto;
                 min-height: 0;
@@ -882,7 +869,6 @@
                 <img class="brand-logo" src="/logo.svg" width="44" height="44" alt="">
                 <div class="brand-text">
                     <h1>JSONL Beautifier</h1>
-                    <p class="tagline">Turn raw JSON Lines into readable JSON</p>
                 </div>
             </a>
             <button id="darkModeToggle" class="dark-mode-toggle" type="button" aria-label="Switch between light and dark theme" title="Switch theme">
